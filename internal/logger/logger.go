@@ -38,8 +38,14 @@ func Init() error {
 	// Create multi-writer to write to both file and stdout
 	multiWriter := io.MultiWriter(os.Stdout, LogFile)
 
+	flags := log.Ldate | log.Ltime | log.Lshortfile
+
+	// Route standard library log (log.Printf in middleware, db, etc.) to the same file + stdout
+	log.SetOutput(multiWriter)
+	log.SetFlags(flags)
+
 	// Create logger with timestamp and file:line information
-	Logger = log.New(multiWriter, "", log.Ldate|log.Ltime|log.Lshortfile)
+	Logger = log.New(multiWriter, "", flags)
 
 	// Log initialization
 	Logger.Printf("Logger initialized. Log file: %s", logPath)
