@@ -35,7 +35,7 @@ func SetupRouter(
 
 	// Add CORS middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:4000", "http://localhost:7070", "https://www.fantasygaming.games", "https://fantasygaming.games"},
+		AllowOrigins:     []string{"http://localhost:3000", "http://localhost:4000", "http://localhost:5173", "http://localhost:7070", "https://www.fantasygaming.games", "https://fantasygaming.games"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -71,6 +71,8 @@ func SetupRouter(
 		protected.GET("/profile", profileHandler.GetProfileById)
 		protected.GET("/profile/code/:code", profileHandler.GetProfileByCode)
 		protected.PUT("/profile", profileHandler.UpdateProfile)
+		protected.PUT("/profile/callback-url", profileHandler.UpdateCallbackURL)
+		protected.PUT("/profile/change-password", profileHandler.ChangePassword)
 		protected.POST("/casino/gameurl", casinoHandler.GetGameURL)
 	}
 
