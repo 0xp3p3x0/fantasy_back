@@ -54,5 +54,9 @@ func Init(cfg *config.Config) *gorm.DB {
 		log.Fatalf("failed to automigrate: %v", err)
 	}
 
+	if err := EnsureDefaultAdmin(db); err != nil {
+		log.Fatalf("failed to seed default admin: %v", err)
+	}
+
 	return db
 }
