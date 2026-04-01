@@ -6,6 +6,7 @@ import (
 	"back/internal/service"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -15,7 +16,7 @@ type Server struct {
 	db       *gorm.DB
 }
 
-func NewServer(db *gorm.DB, cfg *config.Config) (*Server, error) {
+func NewServer(db *gorm.DB, cfg *config.Config, rdb *redis.Client) (*Server, error) {
 	config.SetDB(db)
 
 	authService := service.NewAuthService(db, cfg)
@@ -40,7 +41,7 @@ func NewServer(db *gorm.DB, cfg *config.Config) (*Server, error) {
 		db:       db,
 	}
 
-	server.engine = SetupRouter(authService, profileService, casinoService, agentService, cfg.SecretKey)
+	server.engine = SetupRouter(authService, profileService, casinoService, agentService, cfg.SecretKey, rdb)
 	return server, nil
 }
 

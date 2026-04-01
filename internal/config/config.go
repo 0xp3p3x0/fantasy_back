@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strconv"
 	"sync"
 
 	"gorm.io/gorm"
@@ -16,6 +17,9 @@ type Config struct {
 	DBUser        string
 	DBPassword    string
 	DBName        string
+	RedisAddr     string
+	RedisPassword string
+	RedisDB       int
 }
 
 var (
@@ -34,6 +38,9 @@ func Load() (*Config, error) {
 		DBUser:        os.Getenv("DB_USER"),
 		DBPassword:    os.Getenv("DB_PASSWORD"),
 		DBName:        os.Getenv("DB_NAME"),
+		RedisAddr:     os.Getenv("REDIS_ADDR"),
+		RedisPassword: os.Getenv("REDIS_PASSWORD"),
+		RedisDB:       getEnvAsInt("REDIS_DB", 0),
 	}
 
 	return cfg, nil
@@ -45,6 +52,18 @@ func getEnv(key, fallback string) string {
 		return fallback
 	}
 	return value
+}
+
+func getEnvAsInt(key string, fallback int) int {
+	s := os.Getenv(key)
+	if s == "" {
+		return fallback
+	}
+	v, err := strconv.Atoi(s)
+	if err != nil {
+		return fallback
+	}
+	return v
 }
 
 func getDB() *gorm.DB {

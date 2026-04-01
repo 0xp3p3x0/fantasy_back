@@ -5,6 +5,7 @@ import (
 	"back/internal/config"
 	"back/internal/db"
 	"back/internal/logger"
+	"back/internal/redisclient"
 	"back/internal/server"
 	"log"
 
@@ -42,8 +43,19 @@ func main() {
 	// Initialize database
 	database := db.Init(cfg)
 
+	rdb, err := redisclient.New(cfg)
+	if err != nil {
+		logger.Fatalf("redis: %v", err)
+	}
+	if rdb != nil {
+		defer func() { _ = rdb.Close() }()
+		logger.Info("Redis enabled: %s (db=%d)", cfg.RedisAddr, cfg.RedisDB)
+	} else {
+		logger.Info("Redis disabled (set REDIS_ADDR to enable)")
+	}
+
 	// Create and start server
-	srv, err := server.NewServer(database, cfg)
+	srv, err := server.NewServer(database, cfg, rdb)
 	if err != nil {
 		log.Fatalf("Failed to create server: %v", err)
 		logger.Fatalf("Failed to create server: %v", err)

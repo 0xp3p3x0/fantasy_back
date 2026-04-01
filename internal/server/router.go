@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -26,7 +27,8 @@ func SetupRouter(
 	profileService *service.ProfileService,
 	casinoService *service.CasinoService,
 	agentService *service.AgentService,
-	secretKey string) *gin.Engine {
+	secretKey string,
+	rdb *redis.Client) *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery())
 
@@ -48,7 +50,19 @@ func SetupRouter(
 		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is running"})
 	})
 	router.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"status": "ok", "message": "Service is healthy"})
+		body := gin.H{"status": "ok", "message": "Service is healthy", "redis": "disabled"}
+		if rdb != nil {
+			if err := rdb.Ping(c.Request.Context()).Err(); err != nil {
+				c.JSON(http.StatusServiceUnavailable, gin.H{
+					"status":  "degraded",
+					"message": "Redis unavailable",
+					"redis":   err.Error(),
+				})
+				return
+			}
+			body["redis"] = "ok"
+		}
+		c.JSON(http.StatusOK, body)
 	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -60,7 +74,7 @@ func SetupRouter(
 	// Public routes
 	public := router.Group("/api/v1")
 	{
-		public.POST("/auth/login", authHandler.Login)
+		public.POST("/auth/login", middleware.LoginRateLimit(rdb, 5, time.Minute), authHandler.Login)
 		public.POST("/auth/register", authHandler.Register)
 	}
 
