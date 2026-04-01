@@ -1,0 +1,290 @@
+basePath: /
+definitions:
+  handler.loginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  service.CreateAgentRequest:
+    properties:
+      callback_url:
+        type: string
+      code:
+        type: string
+      currency:
+        type: string
+      password:
+        type: string
+      status:
+        type: string
+      username:
+        type: string
+    required:
+    - callback_url
+    - code
+    - currency
+    - password
+    - username
+    type: object
+  service.RegisterRequest:
+    properties:
+      callback_url:
+        type: string
+      code:
+        type: string
+      currency:
+        type: string
+      password:
+        type: string
+      role:
+        default: agent
+        type: string
+      username:
+        type: string
+    required:
+    - code
+    - password
+    - role
+    - username
+    type: object
+  service.UpdateAgentRequest:
+    properties:
+      callback_url:
+        type: string
+      code:
+        type: string
+      currency:
+        type: string
+      password:
+        type: string
+      status:
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+  description: Backend API for authentication, profile, casino and agent management.
+  title: Fantasy Back API
+  version: "1.0"
+paths:
+  /api/v1/admin/agents:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List all agents (admin only)
+      tags:
+      - agent-admin
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Create agent payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.CreateAgentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create agent (admin only)
+      tags:
+      - agent-admin
+  /api/v1/admin/agents/{id}:
+    delete:
+      parameters:
+      - description: Agent ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete an agent (admin only)
+      tags:
+      - agent-admin
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Agent ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update agent payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.UpdateAgentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update agent information (admin only)
+      tags:
+      - agent-admin
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/handler.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login with username/password
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Register payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/service.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register a new user
+      tags:
+      - auth
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
