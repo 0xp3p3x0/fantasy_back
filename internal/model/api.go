@@ -1,14 +1,22 @@
 package model
 
 type GetGameURLRequest struct {
-	UserCode     string `json:"userCode" binding:"required"`
-	Nickname     string `json:"nickname,omitempty"`
-	VendorCode   string `json:"vendorCode" binding:"required"`
-	GameCode     string `json:"gameCode,omitempty"`
-	CurrencyCode string `json:"currencyCode" binding:"required"`
-	Language     string `json:"language,omitempty"`
-	Channel      string `json:"channel,omitempty"`
-	IsDemo       bool   `json:"isDemo"`
+	Method         string  `json:"method" binding:"required"`
+	Token          string  `json:"token" binding:"required"`
+	AgentCode      string  `json:"agentCode" binding:"required"`
+	UserCode       string  `json:"userCode" binding:"required"`
+	Nickname       string  `json:"nickname,omitempty"`
+	VendorCode     string  `json:"vendorCode" binding:"required"`
+	GameCode       string  `json:"gameCode,omitempty"`
+	CurrencyCode   string  `json:"currencyCode" binding:"required"`
+	Language       string  `json:"language,omitempty"`
+	Channel        string  `json:"channel,omitempty"`
+	FreeRounds     string  `json:"freeRounds,omitempty"`
+	FreeRoundsCode string  `json:"freeRoundsCode,omitempty"`
+	CustomGameName string  `json:"customGameName,omitempty"`
+	HomeUrl        string  `json:"homeUrl,omitempty"`
+	UserBalance    float64 `json:"userBalance,omitempty"`
+	IsDemo         bool    `json:"isDemo,omitempty"`
 }
 
 type GetGameURLResponse struct {

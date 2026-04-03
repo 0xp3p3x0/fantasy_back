@@ -6,18 +6,22 @@ type ProviderBaseResponse struct {
 }
 
 type ProviderGetGameURLRequest struct {
-	Method       string  `json:"method"`
-	Token        string  `json:"token"`
-	AgentCode    string  `json:"agentCode"`
-	UserCode     string  `json:"userCode"`
-	NickName     string  `json:"nickName,omitempty"`
-	VendorCode   string  `json:"vendorCode"`
-	GameCode     string  `json:"gameCode,omitempty"`
-	CurrencyCode string  `json:"currencyCode"`
-	Language     string  `json:"language,omitempty"`
-	Channel      string  `json:"channel,omitempty"`
-	IsDemo       bool    `json:"isDemo,omitempty"`
-	UserBalance  float64 `json:"userBalance,omitempty"`
+	Method         string  `json:"method"`
+	Token          string  `json:"token"`
+	AgentCode      string  `json:"agentCode"`
+	UserCode       string  `json:"userCode"`
+	Nickname       string  `json:"nickname,omitempty"`
+	VendorCode     string  `json:"vendorCode"`
+	GameCode       string  `json:"gameCode,omitempty"`
+	CurrencyCode   string  `json:"currencyCode"`
+	Language       string  `json:"language,omitempty"`
+	Channel        string  `json:"channel,omitempty"`
+	FreeRounds     string  `json:"freeRounds,omitempty"`
+	FreeRoundsCode string  `json:"freeRoundsCode,omitempty"`
+	CustomGameName string  `json:"customGameName,omitempty"`
+	HomeUrl        string  `json:"homeUrl,omitempty"`
+	IsDemo         bool    `json:"isDemo,omitempty"`
+	UserBalance    float64 `json:"userBalance,omitempty"`
 }
 
 type ProviderGetGameURLResponse struct {

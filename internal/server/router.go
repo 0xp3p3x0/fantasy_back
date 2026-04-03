@@ -27,6 +27,7 @@ func SetupRouter(
 	profileService *service.ProfileService,
 	casinoService *service.CasinoService,
 	agentService *service.AgentService,
+	apiListService *service.APIListService,
 	secretKey string,
 	rdb *redis.Client) *gin.Engine {
 	router := gin.New()
@@ -71,11 +72,14 @@ func SetupRouter(
 	profileHandler := handler.NewProfileHandler(profileService)
 	casinoHandler := handler.NewCasinoHandler(casinoService)
 	agentHandler := handler.NewAgentHandler(agentService, authService)
+	apiListHandler := handler.NewAPIListHandler(apiListService)
 	// Public routes
 	public := router.Group("/api/v1")
 	{
 		public.POST("/auth/login", middleware.LoginRateLimit(rdb, 5, time.Minute), authHandler.Login)
 		public.POST("/auth/register", authHandler.Register)
+		public.POST("/casino/gameurl", casinoHandler.GetGameURL)
+		public.POST("/casino/callback", casinoHandler.Callback)
 	}
 
 	// Protected routes
@@ -87,7 +91,6 @@ func SetupRouter(
 		protected.PUT("/profile", profileHandler.UpdateProfile)
 		protected.PUT("/profile/callback-url", profileHandler.UpdateCallbackURL)
 		protected.PUT("/profile/change-password", profileHandler.ChangePassword)
-		protected.POST("/casino/gameurl", casinoHandler.GetGameURL)
 	}
 
 	admin := router.Group("/api/v1/admin")
@@ -97,6 +100,12 @@ func SetupRouter(
 		admin.GET("/agents", agentHandler.ListAgents)
 		admin.PUT("/agents/:id", agentHandler.UpdateAgent)
 		admin.DELETE("/agents/:id", agentHandler.DeleteAgent)
+
+		admin.POST("/api-lists", apiListHandler.Create)
+		admin.GET("/api-lists", apiListHandler.List)
+		admin.GET("/api-lists/:id", apiListHandler.GetByID)
+		admin.PUT("/api-lists/:id", apiListHandler.Update)
+		admin.DELETE("/api-lists/:id", apiListHandler.Delete)
 	}
 
 	return router

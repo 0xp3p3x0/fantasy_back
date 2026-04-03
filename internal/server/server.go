@@ -23,6 +23,7 @@ func NewServer(db *gorm.DB, cfg *config.Config, rdb *redis.Client) (*Server, err
 	profileService := service.NewProfileService(db, cfg)
 	casinoService := service.NewCasinoService(db, cfg)
 	agentService := service.NewAgentService(db)
+	apiListService := service.NewAPIListService(db)
 	// previous Handlers struct is kept for compatibility but not used
 	authHandler := handler.NewAuthHandler(authService)
 	profileHandler := handler.NewProfileHandler(profileService)
@@ -41,7 +42,7 @@ func NewServer(db *gorm.DB, cfg *config.Config, rdb *redis.Client) (*Server, err
 		db:       db,
 	}
 
-	server.engine = SetupRouter(authService, profileService, casinoService, agentService, cfg.SecretKey, rdb)
+	server.engine = SetupRouter(authService, profileService, casinoService, agentService, apiListService, cfg.SecretKey, rdb)
 	return server, nil
 }
 

@@ -26,7 +26,7 @@ func (h *CasinoHandler) GetGameURL(c *gin.Context) {
 		return
 	}
 
-	res, err := h.casinoService.GetGameURL(&req)
+	res, err := h.casinoService.GetGameURL(c.Request.Context(), &req)
 	if err != nil {
 		statusCode := http.StatusInternalServerError
 		if appErr, ok := err.(*service.AppError); ok {
@@ -45,3 +45,18 @@ func (h *CasinoHandler) GetGameURL(c *gin.Context) {
 	})
 }
 
+// Callback is the single webhook URL for all provider wallet calls.
+// Body must include "method": "GetBalance" | "ChangeBalance" | "UpdateDetail" (case-insensitive);
+// other fields depend on the method. Response is always { status, msg, balance? } per vendor spec.
+func (h *CasinoHandler) Callback(c *gin.Context) {
+	var req model.CallbackRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, model.ProviderCallbackResponse{
+			Status: model.ProvCallbackBadRequest,
+			Msg:    "INVALID_JSON",
+		})
+		return
+	}
+	out := h.casinoService.HandleProviderCallback(c.Request.Context(), &req)
+	c.JSON(http.StatusOK, out)
+}

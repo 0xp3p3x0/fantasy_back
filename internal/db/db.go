@@ -50,7 +50,14 @@ func Init(cfg *config.Config) *gorm.DB {
 	}
 
 	// Auto-migrate the tables we care about
-	if err := db.AutoMigrate(&model.User{}, &model.APIList{}, &model.APIList{}); err != nil {
+	if err := db.AutoMigrate(
+		&model.User{},
+		&model.APIList{},
+		&model.CasinoPlayer{},
+		&model.CasinoPlayerBalance{},
+		&model.CasinoWager{},
+		&model.CasinoProcessedTxn{},
+	); err != nil {
 		log.Fatalf("failed to automigrate: %v", err)
 	}
 

@@ -9,9 +9,10 @@ import (
 )
 
 type Config struct {
-	Port          string
-	ProviderTries int
-	SecretKey     string
+	Port            string
+	ProviderTries   int
+	ProviderAPIURL  string // optional fallback when APIList.base_url is empty (same endpoint for all currencies)
+	SecretKey       string
 	DBHost        string
 	DBPort        string
 	DBUser        string
@@ -30,9 +31,10 @@ var (
 
 func Load() (*Config, error) {
 	cfg := &Config{
-		Port:          getEnv("PORT", "3000"),
-		ProviderTries: 3,
-		SecretKey:     os.Getenv("SECRET_KEY"),
+		Port:           getEnv("PORT", "3000"),
+		ProviderTries:  3,
+		ProviderAPIURL: os.Getenv("PROVIDER_API_URL"),
+		SecretKey:      os.Getenv("SECRET_KEY"),
 		DBHost:        os.Getenv("DB_HOST"),
 		DBPort:        os.Getenv("DB_PORT"),
 		DBUser:        os.Getenv("DB_USER"),
@@ -76,14 +78,15 @@ func SetDB(database *gorm.DB) {
 func LoadConfig() *Config {
 	once.Do(func() {
 		cfg = &Config{
-			DBHost:        getEnv("DB_HOST", "localhost"),
-			DBPort:        getEnv("DB_PORT", "5432"),
-			DBUser:        getEnv("DB_USER", "postgres"),
-			DBPassword:    getEnv("DB_PASSWORD", ""),
-			DBName:        getEnv("DB_NAME", "casino_db"),
-			Port:          getEnv("PORT", "3000"),
-			ProviderTries: 3,
-			SecretKey:     os.Getenv("SECRET_KEY"),
+			DBHost:         getEnv("DB_HOST", "localhost"),
+			DBPort:         getEnv("DB_PORT", "5432"),
+			DBUser:         getEnv("DB_USER", "postgres"),
+			DBPassword:     getEnv("DB_PASSWORD", ""),
+			DBName:         getEnv("DB_NAME", "casino_db"),
+			Port:           getEnv("PORT", "3000"),
+			ProviderTries:  3,
+			ProviderAPIURL: os.Getenv("PROVIDER_API_URL"),
+			SecretKey:      os.Getenv("SECRET_KEY"),
 		}
 	})
 	return cfg
